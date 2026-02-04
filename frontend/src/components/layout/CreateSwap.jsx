@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import {useNavigate } from "react-router-dom";
 import { useHttpClient } from "../../common/hooks/http-hook.js";
 import { showSuccess } from "../../common/toastHelper";
 
 const CreateSwap = () => {
   const { sendRequest } = useHttpClient();
+  const navigate = useNavigate();
   const [taskDetails, setTaskDetails] = useState({
     title: "",
     description: "",
@@ -83,6 +85,9 @@ const submitTask = async (e) => {
         attachments: "",
         deadline: "",
       });
+      setTimeout(() => {
+         navigate("/my-tasks");
+      }, 2000);
       }
     } catch (err) {
       console.error(err);

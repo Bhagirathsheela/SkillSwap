@@ -423,7 +423,8 @@ const getMyTasks = async (req, res, next) => {
       .populate("creator", "name image")
       .select(
         "title description requestedTask offeredTask location attachments deadline status createdAt"
-      );
+      )
+      .sort({ createdAt: -1 }); // 👈 latest first
   } catch (err) {
     return next(
       new HttpError("Fetching your tasks failed, please try again", 500)
