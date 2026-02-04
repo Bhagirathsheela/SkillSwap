@@ -161,12 +161,20 @@ const login = async (req, res, next) => {
   }
 
   // Set secure cookie, do NOT send token or user info in body
-  res.cookie("token", token, {
+ // this is applicable when we have the backend and frontend in same domain
+  /*  res.cookie("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
     maxAge: 24 * 60 * 60 * 1000,
-  });
+  }); */
+  res.cookie("token", token, {
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  path: "/",
+  maxAge: 24 * 60 * 60 * 1000,
+});
 
   // Minimal response, no user details
   res.status(200).json({ message: "Login successful" });
@@ -203,12 +211,21 @@ const getUserProfile = async (req, res, next) => {
   }
 };
 const logout = (req, res, next) => {
-  res.clearCookie("token", {
+  // use once the backend and frontend are on same domain
+  /* res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production", // only in prod
     sameSite: "strict",
     path: "/",
+  }); */
+
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/",
   });
+
 
   res.status(200).json({ message: "Logged out successfully" });
 };
