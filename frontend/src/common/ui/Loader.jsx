@@ -7,8 +7,14 @@ const Loader = () => {
   if (!loading) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="loader border-t-4 border-blue-500 border-solid rounded-full w-16 h-16 animate-spin"></div>
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
+      <div
+        className="loader rounded-full w-14 h-14 animate-spin"
+        style={{
+          border: "4px solid rgba(255,255,255,0.25)",
+          borderTopColor: "var(--color-brand-primary)",
+        }}
+      ></div>
     </div>
   );
 };

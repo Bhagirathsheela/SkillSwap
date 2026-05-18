@@ -46,25 +46,28 @@ const ConfirmSignupPage = () => {
   }, [sendRequest, token, navigate]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white rounded-2xl shadow-lg p-8 max-w-md w-full text-center">
+    <div className="flex items-center justify-center min-h-screen px-4 py-8 bg-[var(--surface-bg)]">
+      <div className="w-full max-w-md bg-[var(--surface-white)] rounded-2xl
+                      border border-[var(--surface-border)] shadow-card
+                      p-8 sm:p-10 text-center">
         {loading ? (
           <>
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent mx-auto mb-4"></div>
-            <p className="text-gray-600 text-lg">Confirming your account...</p>
+            <div className="animate-spin rounded-full h-12 w-12 mx-auto mb-4
+                            border-4 border-[var(--color-brand-primary)] border-t-transparent"></div>
+            <p className="text-[var(--text-secondary)] text-base">Confirming your account...</p>
           </>
         ) : (
           <>
             <h2
-              className={`text-2xl font-bold mb-4 ${
-                success ? "text-green-600" : "text-red-600"
+              className={`text-2xl font-bold mb-4 tracking-tight ${
+                success ? "text-emerald-600" : "text-red-500"
               }`}
             >
               {success ? "Success!" : "Oops!"}
             </h2>
-            <p className="text-gray-700 text-lg mb-4">{message}</p>
+            <p className="text-[var(--text-primary)] text-base mb-4 leading-relaxed">{message}</p>
             {success && (
-              <p className="text-gray-500 text-sm">
+              <p className="text-[var(--text-muted)] text-sm">
                 Redirecting to login page in 3 seconds...
               </p>
             )}

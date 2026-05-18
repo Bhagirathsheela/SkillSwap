@@ -698,14 +698,27 @@ a.active-link {
   flex-shrink: 0;
 }
 
+/*
+  Avatar ring — use box-shadow instead of a covering pseudo-element.
+  The old approach (a span with gradient background) painted white over
+  the image, making it invisible on desktop. box-shadow renders outside
+  the element boundary and never obscures the image itself.
+*/
+.usercard-avatar-wrap img {
+  /* Single ring — no white gap layer needed on a white card */
+  box-shadow: 0 0 0 2.5px #667eea;
+  display: block;
+}
+
+/* The ring span is now unused — hide it safely */
 .usercard-avatar-ring {
-  position: absolute;
-  inset: -3px;
-  border-radius: 50%;
-  border: 2px solid transparent;
-  background: linear-gradient(white, white) padding-box,
-              linear-gradient(135deg, #667eea, #764ba2) border-box;
-  pointer-events: none;
+  display: none;
+}
+
+/* Mobile card avatar — same single ring as desktop */
+.usercard-mobile-avatar {
+  box-shadow: 0 0 0 2.5px #667eea;
+  display: block;
 }
 
 /* Button inner layout */

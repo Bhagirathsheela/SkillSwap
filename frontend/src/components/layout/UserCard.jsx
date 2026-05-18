@@ -125,22 +125,22 @@ const UserCard = () => {
 
   return (
     <>
-      <section className="px-4 sm:px-8 py-10 bg-gray-50 min-h-screen flex flex-col items-center justify-center">
+      <section className="px-4 sm:px-8 py-10 bg-[var(--surface-bg)] min-h-screen flex flex-col items-center">
         {/* Hero heading */}
         <div className="usercard-hero">
           <span className="usercard-hero-badge">Live swaps</span>
-          <h2 className="text-3xl font-bold text-center text-gray-800">
-            People on <span className="text-blue-600">SkillSwap</span>
+          <h2 className="text-2xl sm:text-3xl font-bold text-center text-[var(--text-primary)] tracking-tight">
+            People on <span className="text-[var(--color-brand-primary)]">SkillSwap</span>
           </h2>
-          <p className="mt-2 text-gray-500 text-center text-base">
+          <p className="mt-2 text-[var(--text-secondary)] text-center text-sm sm:text-base">
             Connect with talented individuals and swap your skills.
           </p>
         </div>
 
         {/* Search bar */}
         <div className="mt-8 w-full max-w-2xl mb-10">
-          <div className="usercard-search flex items-center bg-white rounded-full shadow-md overflow-hidden">
-            <span className="pl-4 text-gray-400">
+          <div className="usercard-search flex items-center bg-[var(--surface-white)] rounded-full overflow-hidden">
+            <span className="pl-5 text-[var(--text-muted)]">
               <FiSearch className="w-5 h-5" />
             </span>
             <input
@@ -148,13 +148,14 @@ const UserCard = () => {
               value={searchTerm}
               onChange={handleSearch}
               placeholder="Search for skills or people..."
-              className="flex-1 px-4 py-3 outline-none text-gray-700 text-sm"
+              className="flex-1 px-4 py-3 outline-none bg-transparent
+                         text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-sm"
               aria-label="Search skills or people"
             />
             {searchTerm && (
               <button
                 onClick={clearSearch}
-                className="pr-4 text-gray-400 hover:text-gray-600 transition"
+                className="pr-4 text-[var(--text-muted)] hover:text-[var(--color-brand-primary)] transition"
                 aria-label="Clear search"
               >
                 <FiX className="w-5 h-5" />
@@ -169,18 +170,21 @@ const UserCard = () => {
             <div className="usercard-empty-icon">
               <FiSearch />
             </div>
-            <p className="text-gray-500 text-lg">No tasks found</p>
-            <p className="text-gray-400 text-sm mt-1">
+            <p className="text-[var(--text-secondary)] text-base sm:text-lg">No tasks found</p>
+            <p className="text-[var(--text-muted)] text-sm mt-1">
               Try a different search term
             </p>
           </div>
         ) : (
-          <div className="flex flex-col gap-6 max-w-[1100px] mx-auto w-full">
+          <div className="flex flex-col gap-5 sm:gap-6 max-w-[1100px] mx-auto w-full">
             {filteredTasks.map((task, index) => (
               <div key={index} className="usercard-item-wrapper">
                 {/* ── Desktop card ── */}
                 <div
-                  className="hidden sm:flex bg-white rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-[1.01] transition-all duration-300 p-6 flex-col lg:flex-row items-start lg:items-center justify-between gap-4"
+                  className="hidden sm:flex bg-[var(--surface-white)] border border-[var(--surface-border)]
+                             rounded-2xl shadow-[var(--card-shadow)] hover:shadow-[var(--card-shadow-hover)]
+                             hover:-translate-y-0.5 transition-all duration-300 p-6
+                             flex-col lg:flex-row items-start lg:items-center justify-between gap-5"
                   style={{ animationDelay: `${index * 60}ms` }}
                 >
                   {/* Profile */}
@@ -191,21 +195,20 @@ const UserCard = () => {
                           task.creator.image || "default.png"
                         }`}
                         alt={task.creator.name}
-                        className="w-16 h-16 rounded-full border-2 border-indigo-500 object-cover"
+                        className="w-16 h-16 rounded-full object-cover"
                       />
-                      <span className="usercard-avatar-ring" aria-hidden="true" />
                     </div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-800">
+                    <div className="min-w-0">
+                      <h3 className="text-lg font-semibold text-[var(--text-primary)] truncate">
                         {task.creator.name}
                       </h3>
                       {task.location && (
-                        <p className="text-gray-500 text-sm flex items-center gap-1 mt-0.5">
+                        <p className="text-[var(--text-secondary)] text-sm flex items-center gap-1 mt-0.5">
                           <FiMapPin className="w-3 h-3 flex-shrink-0" />
                           {task.location}
                         </p>
                       )}
-                      <p className="text-gray-400 text-xs mt-1 flex items-center gap-1">
+                      <p className="text-[var(--text-muted)] text-xs mt-1 flex items-center gap-1">
                         <FiClock className="w-3 h-3 flex-shrink-0" />
                         Created: {formatUTCToLocal(task.createdAt, false)}
                       </p>
@@ -214,10 +217,10 @@ const UserCard = () => {
 
                   {/* Task Details */}
                   <div className="flex-1 w-full lg:w-2/4">
-                    <h4 className="text-lg font-bold text-indigo-600">
+                    <h4 className="text-base sm:text-lg font-bold text-[var(--color-brand-primary)]">
                       {task.title}
                     </h4>
-                    <p className="text-gray-600 text-sm mt-1">{task.description}</p>
+                    <p className="text-[var(--text-secondary)] text-sm mt-1 leading-relaxed">{task.description}</p>
 
                     <div className="mt-3 flex flex-wrap gap-2">
                       {task.offeredTask.map((skill, i) => (
@@ -225,7 +228,7 @@ const UserCard = () => {
                           key={`offered-${i}`}
                           className={`${getRandomColor(
                             offeredColors
-                          )} text-sm px-3 py-1 rounded-full`}
+                          )} text-xs sm:text-sm px-3 py-1 rounded-full font-medium`}
                         >
                           Offered: {skill.trim()}
                         </span>
@@ -235,7 +238,7 @@ const UserCard = () => {
                           key={`requested-${i}`}
                           className={`${getRandomColor(
                             requestedColors
-                          )} text-sm px-3 py-1 rounded-full`}
+                          )} text-xs sm:text-sm px-3 py-1 rounded-full font-medium`}
                         >
                           Requested: {skill.trim()}
                         </span>
@@ -243,7 +246,7 @@ const UserCard = () => {
                     </div>
 
                     {task.deadline && (
-                      <p className="text-sm text-gray-500 mt-2 flex items-center gap-1">
+                      <p className="text-sm text-[var(--text-secondary)] mt-3 flex items-center gap-1">
                         <FiClock className="w-3.5 h-3.5 flex-shrink-0" />
                         <span className="font-medium">Deadline:</span>{" "}
                         {formatUTCToLocal(task.deadline, false)}
@@ -252,10 +255,14 @@ const UserCard = () => {
                   </div>
 
                   {/* Connect / Reject */}
-                  <div className="w-full lg:w-1/5 flex justify-end gap-2">
+                  <div className="w-full lg:w-auto flex flex-col sm:flex-row lg:flex-col xl:flex-row justify-end gap-2">
                     <button
                       onClick={() => handleConnect(task)}
-                      className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold py-2 px-6 rounded-lg hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 w-full lg:w-auto"
+                      className="text-white font-semibold py-2.5 px-5 rounded-[var(--btn-radius)]
+                                 bg-gradient-to-r from-[var(--btn-connect-from)] to-[var(--btn-connect-to)]
+                                 shadow-[var(--btn-connect-shadow)]
+                                 hover:-translate-y-0.5 active:translate-y-0
+                                 transition-all duration-300 w-full lg:w-auto text-sm"
                       aria-label={`Connect with ${task.creator.name}`}
                     >
                       <span className="usercard-btn-inner">
@@ -266,7 +273,11 @@ const UserCard = () => {
                     {user?.id && task.pendingRequests?.includes(user.id) && (
                       <button
                         onClick={() => handleReject(task)}
-                        className="bg-red-500 text-white font-semibold py-2 px-6 rounded-lg w-full lg:w-auto hover:bg-red-600 transition"
+                        className="text-white font-semibold py-2.5 px-5 rounded-[var(--btn-radius)]
+                                   bg-[var(--btn-reject-bg)] hover:bg-[var(--btn-reject-bg-hover)]
+                                   shadow-[0_2px_8px_rgba(239,68,68,0.25)]
+                                   hover:-translate-y-0.5 active:translate-y-0
+                                   transition w-full lg:w-auto text-sm"
                         aria-label={`Reject request from ${task.creator.name}`}
                       >
                         <span className="usercard-btn-inner">
@@ -279,7 +290,7 @@ const UserCard = () => {
                 </div>
 
                 {/* ── Mobile card ── */}
-                <div className="sm:hidden usercard-mobile bg-white rounded-2xl shadow-md p-4">
+                <div className="sm:hidden usercard-mobile bg-[var(--surface-white)] rounded-2xl p-4">
                   {/* Mobile header */}
                   <div className="flex items-center gap-3 mb-3">
                     <img
@@ -287,14 +298,14 @@ const UserCard = () => {
                         task.creator.image || "default.png"
                       }`}
                       alt={task.creator.name}
-                      className="w-12 h-12 rounded-full border-2 border-indigo-400 object-cover flex-shrink-0"
+                      className="w-12 h-12 rounded-full object-cover flex-shrink-0 usercard-mobile-avatar"
                     />
-                    <div className="min-w-0">
-                      <h3 className="font-semibold text-gray-800 text-base truncate">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-[var(--text-primary)] text-base truncate">
                         {task.creator.name}
                       </h3>
                       {task.location && (
-                        <p className="text-gray-400 text-xs flex items-center gap-1 mt-0.5">
+                        <p className="text-[var(--text-muted)] text-xs flex items-center gap-1 mt-0.5">
                           <FiMapPin className="w-3 h-3 flex-shrink-0" />
                           {task.location}
                         </p>
@@ -303,10 +314,10 @@ const UserCard = () => {
                   </div>
 
                   {/* Mobile task info */}
-                  <h4 className="text-base font-bold text-indigo-600 mb-1">
+                  <h4 className="text-base font-bold text-[var(--color-brand-primary)] mb-1">
                     {task.title}
                   </h4>
-                  <p className="text-gray-500 text-sm leading-relaxed mb-3">
+                  <p className="text-[var(--text-secondary)] text-sm leading-relaxed mb-3">
                     {task.description}
                   </p>
 
@@ -316,7 +327,7 @@ const UserCard = () => {
                         key={`m-offered-${i}`}
                         className={`${getRandomColor(
                           offeredColors
-                        )} text-xs px-2.5 py-1 rounded-full`}
+                        )} text-xs px-2.5 py-1 rounded-full font-medium`}
                       >
                         Offered: {skill.trim()}
                       </span>
@@ -326,7 +337,7 @@ const UserCard = () => {
                         key={`m-requested-${i}`}
                         className={`${getRandomColor(
                           requestedColors
-                        )} text-xs px-2.5 py-1 rounded-full`}
+                        )} text-xs px-2.5 py-1 rounded-full font-medium`}
                       >
                         Requested: {skill.trim()}
                       </span>
@@ -334,7 +345,7 @@ const UserCard = () => {
                   </div>
 
                   {task.deadline && (
-                    <p className="text-xs text-gray-400 flex items-center gap-1 mb-3">
+                    <p className="text-xs text-[var(--text-muted)] flex items-center gap-1 mb-3">
                       <FiClock className="w-3 h-3" />
                       Deadline: {formatUTCToLocal(task.deadline, false)}
                     </p>
@@ -344,14 +355,19 @@ const UserCard = () => {
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleConnect(task)}
-                      className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold py-2.5 px-4 rounded-lg hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 flex-1 text-sm"
+                      className="text-white font-semibold py-2.5 px-4 rounded-[var(--btn-radius)]
+                                 bg-gradient-to-r from-[var(--btn-connect-from)] to-[var(--btn-connect-to)]
+                                 shadow-[var(--btn-connect-shadow)]
+                                 active:scale-[0.98] transition flex-1 text-sm"
                     >
                       Connect
                     </button>
                     {user?.id && task.pendingRequests?.includes(user.id) && (
                       <button
                         onClick={() => handleReject(task)}
-                        className="bg-red-500 text-white font-semibold py-2.5 px-4 rounded-lg hover:bg-red-600 transition text-sm"
+                        className="text-white font-semibold py-2.5 px-4 rounded-[var(--btn-radius)]
+                                   bg-[var(--btn-reject-bg)] hover:bg-[var(--btn-reject-bg-hover)]
+                                   active:scale-[0.98] transition text-sm"
                       >
                         Reject
                       </button>
