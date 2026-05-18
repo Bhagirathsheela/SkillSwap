@@ -1,13 +1,10 @@
 import React from "react";
 import HowItWorks from "./HowItWorks.jsx";
 import { useHttpClient } from "../../common/hooks/http-hook.js";
-import { FiSearch, FiX } from "react-icons/fi";
+import { FiSearch, FiX, FiMapPin, FiClock, FiUserPlus, FiUserX } from "react-icons/fi";
 import { formatUTCToLocal } from "../../common/utils.js";
-//import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../common/context/auth-context.jsx";
-
-//const socket = io(import.meta.env.VITE_APP_BACKEND_URL);
 
 const UserCard = () => {
   const { sendRequest } = useHttpClient();
@@ -17,30 +14,29 @@ const UserCard = () => {
   const [tasksList, setTasksList] = React.useState([]);
   const [filteredTasks, setFilteredTasks] = React.useState([]);
   const [searchTerm, setSearchTerm] = React.useState([]);
-  
+
   // Fetch all tasks
-React.useEffect(() => {
-  const getAllTasks = async () => {
-    try {
-      const responseData = await sendRequest(
-        `${import.meta.env.VITE_APP_BACKEND_URL}/tasks?status=open`
-      );
-      if (responseData?.tasks) {
-        // Filter out tasks created by the logged-in user
-        const filtered = responseData.tasks.filter(
-          (task) => task.creator._id !== user?.id
+  React.useEffect(() => {
+    const getAllTasks = async () => {
+      try {
+        const responseData = await sendRequest(
+          `${import.meta.env.VITE_APP_BACKEND_URL}/tasks?status=open`
         );
+        if (responseData?.tasks) {
+          // Filter out tasks created by the logged-in user
+          const filtered = responseData.tasks.filter(
+            (task) => task.creator._id !== user?.id
+          );
 
-        setTasksList(filtered);
-        setFilteredTasks(filtered);
+          setTasksList(filtered);
+          setFilteredTasks(filtered);
+        }
+      } catch (err) {
+        console.error(err);
       }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-getAllTasks();
-}, [isLoggedIn, user?.id]);
-
+    };
+    getAllTasks();
+  }, [isLoggedIn, user?.id]);
 
   const handleSearch = (e) => {
     const value = e.target.value.toLowerCase();
@@ -96,12 +92,12 @@ getAllTasks();
     try {
       const res = await sendRequest(
         `${import.meta.env.VITE_APP_BACKEND_URL}/tasks/connect/${task._id}`,
-        "POST",
+        "POST"
       );
-       if(res){
-      setTasksList((prev) => prev.filter((t) => t._id !== task._id));
-      setFilteredTasks((prev) => prev.filter((t) => t._id !== task._id));
-       }
+      if (res) {
+        setTasksList((prev) => prev.filter((t) => t._id !== task._id));
+        setFilteredTasks((prev) => prev.filter((t) => t._id !== task._id));
+      }
       alert(res.message);
     } catch (err) {
       console.error(err);
@@ -117,9 +113,9 @@ getAllTasks();
         `${import.meta.env.VITE_APP_BACKEND_URL}/tasks/reject/${task._id}`,
         "POST"
       );
-      if(res){   
-      setTasksList((prev) => prev.filter((t) => t._id !== task._id));
-      setFilteredTasks((prev) => prev.filter((t) => t._id !== task._id));
+      if (res) {
+        setTasksList((prev) => prev.filter((t) => t._id !== task._id));
+        setFilteredTasks((prev) => prev.filter((t) => t._id !== task._id));
       }
     } catch (err) {
       console.error(err);
@@ -130,15 +126,20 @@ getAllTasks();
   return (
     <>
       <section className="px-4 sm:px-8 py-10 bg-gray-50 min-h-screen flex flex-col items-center justify-center">
-        <h2 className="text-3xl font-bold text-center text-gray-800">
-          People on <span className="text-blue-600">SkillSwap</span>
-        </h2>
-        <p className="mt-2 text-gray-500 text-center text-base">
-          Connect with talented individuals and swap your skills.
-        </p>
+        {/* Hero heading */}
+        <div className="usercard-hero">
+          <span className="usercard-hero-badge">Live swaps</span>
+          <h2 className="text-3xl font-bold text-center text-gray-800">
+            People on <span className="text-blue-600">SkillSwap</span>
+          </h2>
+          <p className="mt-2 text-gray-500 text-center text-base">
+            Connect with talented individuals and swap your skills.
+          </p>
+        </div>
 
+        {/* Search bar */}
         <div className="mt-8 w-full max-w-2xl mb-10">
-          <div className="flex items-center bg-white rounded-full shadow-md overflow-hidden">
+          <div className="usercard-search flex items-center bg-white rounded-full shadow-md overflow-hidden">
             <span className="pl-4 text-gray-400">
               <FiSearch className="w-5 h-5" />
             </span>
@@ -148,11 +149,13 @@ getAllTasks();
               onChange={handleSearch}
               placeholder="Search for skills or people..."
               className="flex-1 px-4 py-3 outline-none text-gray-700 text-sm"
+              aria-label="Search skills or people"
             />
             {searchTerm && (
               <button
                 onClick={clearSearch}
                 className="pr-4 text-gray-400 hover:text-gray-600 transition"
+                aria-label="Clear search"
               >
                 <FiX className="w-5 h-5" />
               </button>
@@ -160,30 +163,50 @@ getAllTasks();
           </div>
         </div>
 
+        {/* Empty state */}
         {filteredTasks.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20">
+          <div className="usercard-empty flex flex-col items-center justify-center py-20">
+            <div className="usercard-empty-icon">
+              <FiSearch />
+            </div>
             <p className="text-gray-500 text-lg">No tasks found</p>
+            <p className="text-gray-400 text-sm mt-1">
+              Try a different search term
+            </p>
           </div>
         ) : (
-          <div className="flex flex-col gap-6 max-w-[1100px] mx-auto">
+          <div className="flex flex-col gap-6 max-w-[1100px] mx-auto w-full">
             {filteredTasks.map((task, index) => (
-              <div key={index}>
-                <div className="hidden sm:flex bg-white rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-[1.01] transition-all duration-300 p-6 flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+              <div key={index} className="usercard-item-wrapper">
+                {/* ── Desktop card ── */}
+                <div
+                  className="hidden sm:flex bg-white rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-[1.01] transition-all duration-300 p-6 flex-col lg:flex-row items-start lg:items-center justify-between gap-4"
+                  style={{ animationDelay: `${index * 60}ms` }}
+                >
                   {/* Profile */}
                   <div className="flex items-start gap-4 w-full lg:w-1/4">
-                    <img
-                      src={`${import.meta.env.VITE_APP_ASSET_URL}/${
-                        task.creator.image || "default.png"
-                      }`}
-                      alt={task.creator.name}
-                      className="w-16 h-16 rounded-full border-2 border-indigo-500 object-cover"
-                    />
+                    <div className="usercard-avatar-wrap">
+                      <img
+                        src={`${import.meta.env.VITE_APP_ASSET_URL}/${
+                          task.creator.image || "default.png"
+                        }`}
+                        alt={task.creator.name}
+                        className="w-16 h-16 rounded-full border-2 border-indigo-500 object-cover"
+                      />
+                      <span className="usercard-avatar-ring" aria-hidden="true" />
+                    </div>
                     <div>
                       <h3 className="text-xl font-semibold text-gray-800">
                         {task.creator.name}
                       </h3>
-                      <p className="text-gray-500 text-sm">{task.location}</p>
-                      <p className="text-gray-400 text-xs mt-1">
+                      {task.location && (
+                        <p className="text-gray-500 text-sm flex items-center gap-1 mt-0.5">
+                          <FiMapPin className="w-3 h-3 flex-shrink-0" />
+                          {task.location}
+                        </p>
+                      )}
+                      <p className="text-gray-400 text-xs mt-1 flex items-center gap-1">
+                        <FiClock className="w-3 h-3 flex-shrink-0" />
                         Created: {formatUTCToLocal(task.createdAt, false)}
                       </p>
                     </div>
@@ -220,7 +243,8 @@ getAllTasks();
                     </div>
 
                     {task.deadline && (
-                      <p className="text-sm text-gray-500 mt-2">
+                      <p className="text-sm text-gray-500 mt-2 flex items-center gap-1">
+                        <FiClock className="w-3.5 h-3.5 flex-shrink-0" />
                         <span className="font-medium">Deadline:</span>{" "}
                         {formatUTCToLocal(task.deadline, false)}
                       </p>
@@ -232,13 +256,102 @@ getAllTasks();
                     <button
                       onClick={() => handleConnect(task)}
                       className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold py-2 px-6 rounded-lg hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 w-full lg:w-auto"
+                      aria-label={`Connect with ${task.creator.name}`}
+                    >
+                      <span className="usercard-btn-inner">
+                        <FiUserPlus className="w-4 h-4" />
+                        Connect
+                      </span>
+                    </button>
+                    {user?.id && task.pendingRequests?.includes(user.id) && (
+                      <button
+                        onClick={() => handleReject(task)}
+                        className="bg-red-500 text-white font-semibold py-2 px-6 rounded-lg w-full lg:w-auto hover:bg-red-600 transition"
+                        aria-label={`Reject request from ${task.creator.name}`}
+                      >
+                        <span className="usercard-btn-inner">
+                          <FiUserX className="w-4 h-4" />
+                          Reject
+                        </span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* ── Mobile card ── */}
+                <div className="sm:hidden usercard-mobile bg-white rounded-2xl shadow-md p-4">
+                  {/* Mobile header */}
+                  <div className="flex items-center gap-3 mb-3">
+                    <img
+                      src={`${import.meta.env.VITE_APP_ASSET_URL}/${
+                        task.creator.image || "default.png"
+                      }`}
+                      alt={task.creator.name}
+                      className="w-12 h-12 rounded-full border-2 border-indigo-400 object-cover flex-shrink-0"
+                    />
+                    <div className="min-w-0">
+                      <h3 className="font-semibold text-gray-800 text-base truncate">
+                        {task.creator.name}
+                      </h3>
+                      {task.location && (
+                        <p className="text-gray-400 text-xs flex items-center gap-1 mt-0.5">
+                          <FiMapPin className="w-3 h-3 flex-shrink-0" />
+                          {task.location}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Mobile task info */}
+                  <h4 className="text-base font-bold text-indigo-600 mb-1">
+                    {task.title}
+                  </h4>
+                  <p className="text-gray-500 text-sm leading-relaxed mb-3">
+                    {task.description}
+                  </p>
+
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {task.offeredTask.map((skill, i) => (
+                      <span
+                        key={`m-offered-${i}`}
+                        className={`${getRandomColor(
+                          offeredColors
+                        )} text-xs px-2.5 py-1 rounded-full`}
+                      >
+                        Offered: {skill.trim()}
+                      </span>
+                    ))}
+                    {task.requestedTask.map((skill, i) => (
+                      <span
+                        key={`m-requested-${i}`}
+                        className={`${getRandomColor(
+                          requestedColors
+                        )} text-xs px-2.5 py-1 rounded-full`}
+                      >
+                        Requested: {skill.trim()}
+                      </span>
+                    ))}
+                  </div>
+
+                  {task.deadline && (
+                    <p className="text-xs text-gray-400 flex items-center gap-1 mb-3">
+                      <FiClock className="w-3 h-3" />
+                      Deadline: {formatUTCToLocal(task.deadline, false)}
+                    </p>
+                  )}
+
+                  {/* Mobile actions */}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleConnect(task)}
+                      className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold py-2.5 px-4 rounded-lg hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 flex-1 text-sm"
                     >
                       Connect
                     </button>
                     {user?.id && task.pendingRequests?.includes(user.id) && (
                       <button
                         onClick={() => handleReject(task)}
-                        className="bg-red-500 text-white font-semibold py-2 px-6 rounded-lg w-full lg:w-auto hover:bg-red-600 transition"
+                        className="bg-red-500 text-white font-semibold py-2.5 px-4 rounded-lg hover:bg-red-600 transition text-sm"
                       >
                         Reject
                       </button>

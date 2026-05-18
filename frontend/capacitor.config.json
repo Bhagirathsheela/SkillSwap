@@ -1,0 +1,10 @@
+{
+  "appId": "com.bhagirath.skillswap",
+  "appName": "Skill Swap",
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "https://skill-swap-lyart-alpha.vercel.app",
+    "androidScheme": "https"
+  },
+  "webDir": "dist"
+}
