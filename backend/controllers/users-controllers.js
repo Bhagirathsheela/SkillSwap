@@ -420,6 +420,76 @@ const updatePassword = async (req, res, next) => {
   res.status(200).json({ message: "Password updated successfully!" });
 };
 
+const changePassword = async (req, res, next) => {
+  const { oldPassword, newPassword } = req.body;
+  const { email } = req.userData;
+
+  if (!oldPassword || !newPassword) {
+    return next(
+      new HttpError("Old password and new password are required", 422)
+    );
+  }
+
+  if (newPassword.length < 6) {
+    return next(
+      new HttpError("New password must be at least 6 characters long", 422)
+    );
+  }
+
+  if (oldPassword === newPassword) {
+    return next(
+      new HttpError(
+        "New password must be different from the current password",
+        422
+      )
+    );
+  }
+
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ email });
+  } catch (err) {
+    return next(
+      new HttpError("Could not change password, please try again later", 500)
+    );
+  }
+
+  if (!existingUser) {
+    return next(new HttpError("User not found", 404));
+  }
+
+  let isValidPassword;
+  try {
+    isValidPassword = await bcrypt.compare(oldPassword, existingUser.password);
+  } catch (err) {
+    return next(
+      new HttpError("Could not verify current password, please try again", 500)
+    );
+  }
+
+  if (!isValidPassword) {
+    return next(new HttpError("Current password is incorrect", 401));
+  }
+
+  let hashedPassword;
+  try {
+    hashedPassword = await bcrypt.hash(newPassword, 12);
+  } catch (err) {
+    return next(
+      new HttpError("Could not update password, please try again.", 500)
+    );
+  }
+
+  existingUser.password = hashedPassword;
+  try {
+    await existingUser.save();
+  } catch (err) {
+    return next(new HttpError("Saving new password failed", 500));
+  }
+
+  res.status(200).json({ message: "Password changed successfully!" });
+};
+
 const deleteUser = async (req, res, next) => {
   const { password } = req.body;
   const { email } = req.userData;
@@ -458,4 +528,4 @@ exports.getCurrentUser = getCurrentUser;
 exports.getUserProfile = getUserProfile;
 exports.logout = logout;
 exports.deleteUser = deleteUser;
-
+exports.changePassword = changePassword;

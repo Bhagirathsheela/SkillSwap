@@ -35,4 +35,6 @@ router.patch(
   usersController.updateUser
 );
 router.delete("/delete-account", usersController.deleteUser);
+router.post("/change-password", usersController.changePassword);
+
 module.exports = router;

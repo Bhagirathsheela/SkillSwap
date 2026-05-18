@@ -14,9 +14,9 @@ import ResetPasswordPage from "./components/auth/ResetPasswordPage";
 import RequestsPage from "./components/layout/RequestsPage";
 import MyTasks from "./components/user/MyTasks";
 import ChatPage from "./components/layout/ChatPage";
+import ChangePassword from "./components/auth/ChangePassword";
 
 function App() {
-  
   return (
     <>
       <NavBar />
@@ -54,6 +54,14 @@ function App() {
           element={
             <PrivateRoute>
               <ChatPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/change_password"
+          element={
+            <PrivateRoute>
+              <ChangePassword />
             </PrivateRoute>
           }
         />
