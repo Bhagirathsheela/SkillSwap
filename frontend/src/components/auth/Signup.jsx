@@ -29,17 +29,17 @@ const Signup = ({ setShowLogin }) => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4">
-      <div className="w-full max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-3xl 
-                  bg-white p-12 rounded-lg border border-gray-200 shadow-card">
-        <h2 className="text-3xl font-semibold text-center text-gray-800 mb-10">
+    <div className="flex items-center justify-center min-h-screen px-4 py-8 bg-[var(--surface-bg)]">
+      <div className="w-full max-w-md bg-[var(--surface-white)] p-8 sm:p-10
+                      rounded-2xl border border-[var(--surface-border)] shadow-card">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center text-[var(--text-primary)] mb-8 tracking-tight">
           Create Your Account
         </h2>
 
-        <form onSubmit={handleRegisterSubmit} className="space-y-6">
+        <form onSubmit={handleRegisterSubmit} className="space-y-5">
           {/* Name */}
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-600 mb-1">
+            <label htmlFor="name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
               Name
             </label>
             <input
@@ -49,14 +49,18 @@ const Signup = ({ setShowLogin }) => {
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter your name"
               required
-              className="w-full px-4 py-3 border rounded-lg focus:ring-2 
-                         focus:ring-blue-500 focus:outline-none"
+              className="w-full px-4 py-2.5 text-sm rounded-lg
+                         border border-[var(--surface-border)]
+                         text-[var(--text-primary)] placeholder:text-[var(--text-muted)]
+                         transition focus:outline-none
+                         focus:border-[var(--color-brand-primary)]
+                         focus:ring-2 focus:ring-[var(--color-brand-primary)]/20"
             />
           </div>
 
           {/* Email */}
           <div>
-            <label htmlFor="emailReg" className="block text-sm font-medium text-gray-600 mb-1">
+            <label htmlFor="emailReg" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
               Email
             </label>
             <input
@@ -66,14 +70,18 @@ const Signup = ({ setShowLogin }) => {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
               required
-              className="w-full px-4 py-3 border rounded-lg focus:ring-2 
-                         focus:ring-blue-500 focus:outline-none"
+              className="w-full px-4 py-2.5 text-sm rounded-lg
+                         border border-[var(--surface-border)]
+                         text-[var(--text-primary)] placeholder:text-[var(--text-muted)]
+                         transition focus:outline-none
+                         focus:border-[var(--color-brand-primary)]
+                         focus:ring-2 focus:ring-[var(--color-brand-primary)]/20"
             />
           </div>
 
           {/* Password */}
           <div>
-            <label htmlFor="passwordReg" className="block text-sm font-medium text-gray-600 mb-1">
+            <label htmlFor="passwordReg" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
               Password
             </label>
             <input
@@ -83,25 +91,34 @@ const Signup = ({ setShowLogin }) => {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Create your password"
               required
-              className="w-full px-4 py-3 border rounded-lg focus:ring-2 
-                         focus:ring-blue-500 focus:outline-none"
+              className="w-full px-4 py-2.5 text-sm rounded-lg
+                         border border-[var(--surface-border)]
+                         text-[var(--text-primary)] placeholder:text-[var(--text-muted)]
+                         transition focus:outline-none
+                         focus:border-[var(--color-brand-primary)]
+                         focus:ring-2 focus:ring-[var(--color-brand-primary)]/20"
             />
           </div>
 
           {/* Register Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold 
-                       hover:bg-blue-700 transition text-lg"
+            className="w-full py-3 rounded-lg font-semibold text-white text-base
+                       bg-[var(--color-brand-primary)]
+                       hover:bg-[var(--color-brand-primary-dark)]
+                       hover:-translate-y-0.5 active:translate-y-0
+                       shadow-[0_4px_12px_rgba(91,91,255,0.25)]
+                       transition"
           >
             Register
           </button>
         </form>
 
         {/* Links */}
-        <div className="mt-8 text-center text-sm text-gray-600">
+        <div className="mt-8 text-center text-sm text-[var(--text-secondary)]">
+          Already have an account?{" "}
           <span
-            className="text-blue-600 font-medium cursor-pointer hover:underline"
+            className="text-[var(--color-brand-primary)] font-semibold cursor-pointer hover:underline"
             onClick={() => setShowLogin(true)}
           >
             Back to Login

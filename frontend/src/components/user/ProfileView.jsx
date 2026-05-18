@@ -47,7 +47,11 @@ const ProfileView = () => {
   }, []);
 
   if (!storedUser || !editUser) {
-    return <p>Loading profile...</p>;
+    return (
+      <div className="flex items-center justify-center min-h-[60vh] px-4">
+        <p className="text-[var(--text-secondary)] text-sm">Loading profile...</p>
+      </div>
+    );
   }
 
   /* ================= HANDLERS ================= */
@@ -158,8 +162,8 @@ const ProfileView = () => {
       {!isEditing ? (
         <>
           {/* HEADER */}
-          <div className="header_row profile_header">
-            <div className="profile_img_container profile_img_wrapper">
+          <div className="header_row profile_header flex-wrap sm:flex-nowrap text-center sm:text-left">
+            <div className="profile_img_container profile_img_wrapper w-full sm:w-auto flex justify-center sm:block">
               {storedUser.img ? (
                 <img
                   src={storedUser.img}
@@ -170,13 +174,13 @@ const ProfileView = () => {
                 <div className="profile_img_placeholder">No Image</div>
               )}
             </div>
-            <div className="profile_basic_info profile_info">
+            <div className="profile_basic_info profile_info w-full sm:w-auto">
               <h2 className="profile_name">{storedUser.name}</h2>
               <p className="profile_email">📧 {storedUser.email}</p>
               <p className="profile_city">📍 {storedUser.city}</p>
             </div>
             <button
-              className="edit_button"
+              className="edit_button w-full sm:w-auto"
               onClick={() => setIsEditing(true)}
             >
               Edit Profile
@@ -223,21 +227,27 @@ const ProfileView = () => {
         </>
       ) : (
         <>
-          <h2>Edit Profile</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] mb-4 tracking-tight">Edit Profile</h2>
 
           {/* PROFILE IMAGE */}
-          <div className="card profile_img_edit_container">
+          <div className="card profile_img_edit_container flex-col sm:flex-row text-center sm:text-left">
             {editUser.img ? (
               <img
                 src={editUser.img}
                 alt="preview"
-                className="profile_img_edit"
+                className="profile_img_edit mx-auto sm:mx-0"
               />
             ) : (
-              <div className="profile_img_placeholder">No Image</div>
+              <div className="profile_img_placeholder mx-auto sm:mx-0">No Image</div>
             )}
-            <label className="upload_btn">
-              <input type="file" accept="image/*" onChange={handleImageChange} />
+            <label
+              className="upload_btn inline-flex items-center justify-center px-4 py-2 rounded-lg
+                         bg-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary-dark)]
+                         text-white text-sm font-semibold cursor-pointer
+                         shadow-[0_2px_8px_rgba(91,91,255,0.25)] transition
+                         sm:ml-4 mt-3 sm:mt-0"
+            >
+              <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
               Change Profile Picture
             </label>
           </div>

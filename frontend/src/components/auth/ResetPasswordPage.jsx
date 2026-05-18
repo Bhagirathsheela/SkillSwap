@@ -62,50 +62,78 @@ const ResetPasswordPage = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold text-center mb-4 text-gray-700">Reset Password</h2>
-      {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="mb-4 relative">
-          <label className="block text-sm font-medium text-gray-600 custom_input_label">New Password</label>
-          <input
-            type={showPassword ? "text" : "password"}
-            className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 pr-10"
-            value={password}
-            onChange={(e) => { setPassword(e.target.value); setError(""); }}
-          />
-          <span
-            className="absolute right-3 top-[35px] text-gray-500 cursor-pointer"
-            onClick={() => setShowPassword(prev => !prev)}
-          >
-            <EyeIcon open={showPassword} />
-          </span>
-        </div>
-
-        <div className="mb-4 relative">
-          <label className="block text-sm font-medium text-gray-600 custom_input_label">Confirm New Password</label>
-          <input
-            type={showConfirmPassword ? "text" : "password"}
-            className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 pr-10"
-            value={confirmPassword}
-            onChange={(e) => { setConfirmPassword(e.target.value); setError(""); }}
-          />
-          <span
-            className="absolute right-3 top-[35px] text-gray-500 cursor-pointer"
-            onClick={() => setShowConfirmPassword(prev => !prev)}
-          >
-            <EyeIcon open={showConfirmPassword} />
-          </span>
-        </div>
-
-        <button
-          type="submit"
-          className="w-full px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
-        >
+    <div className="flex items-center justify-center min-h-screen px-4 py-8 bg-[var(--surface-bg)]">
+      <div className="w-full max-w-md bg-[var(--surface-white)] p-8 sm:p-10
+                      rounded-2xl border border-[var(--surface-border)] shadow-card">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 text-[var(--text-primary)] tracking-tight">
           Reset Password
-        </button>
-      </form>
+        </h2>
+        {error && (
+          <p className="text-red-500 text-sm mb-4 text-center bg-red-50 border border-red-200 rounded-lg py-2 px-3">
+            {error}
+          </p>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="relative">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5 custom_input_label">
+              New Password
+            </label>
+            <input
+              type={showPassword ? "text" : "password"}
+              className="w-full px-4 py-2.5 pr-11 text-sm rounded-lg
+                         border border-[var(--surface-border)]
+                         text-[var(--text-primary)] placeholder:text-[var(--text-muted)]
+                         transition focus:outline-none
+                         focus:border-[var(--color-brand-primary)]
+                         focus:ring-2 focus:ring-[var(--color-brand-primary)]/20"
+              value={password}
+              onChange={(e) => { setPassword(e.target.value); setError(""); }}
+            />
+            <span
+              className="absolute right-3 top-[38px] text-[var(--text-muted)] hover:text-[var(--color-brand-primary)] cursor-pointer transition"
+              onClick={() => setShowPassword(prev => !prev)}
+            >
+              <EyeIcon open={showPassword} />
+            </span>
+          </div>
+
+          <div className="relative">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5 custom_input_label">
+              Confirm New Password
+            </label>
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              className="w-full px-4 py-2.5 pr-11 text-sm rounded-lg
+                         border border-[var(--surface-border)]
+                         text-[var(--text-primary)] placeholder:text-[var(--text-muted)]
+                         transition focus:outline-none
+                         focus:border-[var(--color-brand-primary)]
+                         focus:ring-2 focus:ring-[var(--color-brand-primary)]/20"
+              value={confirmPassword}
+              onChange={(e) => { setConfirmPassword(e.target.value); setError(""); }}
+            />
+            <span
+              className="absolute right-3 top-[38px] text-[var(--text-muted)] hover:text-[var(--color-brand-primary)] cursor-pointer transition"
+              onClick={() => setShowConfirmPassword(prev => !prev)}
+            >
+              <EyeIcon open={showConfirmPassword} />
+            </span>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-3 rounded-lg font-semibold text-white text-base
+                       bg-[var(--color-brand-primary)]
+                       hover:bg-[var(--color-brand-primary-dark)]
+                       hover:-translate-y-0.5 active:translate-y-0
+                       shadow-[0_4px_12px_rgba(91,91,255,0.25)]
+                       transition"
+          >
+            Reset Password
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
