@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../common/context/auth-context.jsx";
+import { useSocketContext } from "../../common/context/SocketContext.jsx";
 import { FaUser, FaBell, FaComments } from "react-icons/fa";
 
 function NavBar() {
   const [dropdownOpen, setDropdownOpen]     = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [notifications, setNotifications]   = useState([]);
   const [notifOpen, setNotifOpen]           = useState(false);
 
   const navRef      = useRef(null);
@@ -17,6 +17,15 @@ function NavBar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { isLoggedIn, logout } = useAuthContext();
+
+  // 🚀 Realtime values from SocketContext — no more polling
+  const {
+    notifications,
+    unreadNotifications: unreadCount,
+    unreadChats,
+    markAllNotificationsRead,
+    clearAllNotifications,
+  } = useSocketContext();
 
   // ── Close everything on outside click ─────────────────────────────────────
   useEffect(() => {
@@ -38,74 +47,18 @@ function NavBar() {
     setNotifOpen(false);
   }, [location.pathname]);
 
-  // ── Poll notifications ────────────────────────────────────────────────────
-  useEffect(() => {
-    if (!isLoggedIn) return;
-    const fetchNotifications = async () => {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_APP_BACKEND_URL}/notifications`,
-          { method: "GET", credentials: "include" }
-        );
-        if (!res.ok) return;
-        const data = await res.json();
-        setNotifications(data.notifications || []);
-      } catch (err) {
-        console.error("Failed to fetch notifications", err);
-      }
-    };
-    fetchNotifications();
-    const interval = setInterval(fetchNotifications, 10000);
-    return () => clearInterval(interval);
-  }, [isLoggedIn]);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
 
-  // ── Poll unread chats ─────────────────────────────────────────────────────
-  const [chats, setChats]       = useState([]);
   const [chatOpen, setChatOpen] = useState(false);
-
-  useEffect(() => {
-    if (!isLoggedIn) return;
-    const fetchChats = async () => {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_APP_BACKEND_URL}/chat/count`,
-          { method: "GET", credentials: "include" }
-        );
-        if (!res.ok) return;
-        const data = await res.json();
-        setChats(new Array(data.unreadCount).fill({}));
-      } catch (err) {
-        console.error("Failed to fetch unread chats", err);
-      }
-    };
-    fetchChats();
-    const interval = setInterval(fetchChats, 10000);
-    return () => clearInterval(interval);
-  }, [isLoggedIn]);
-
-  const unreadChats = chats.length;
 
   // ── Notification bell toggle — closes drawer when opening ────────────────
   const handleNotifClick = async () => {
     const opening = !notifOpen;
     setNotifOpen(opening);
-    // Always close drawer when notif panel opens, and vice versa
     if (opening) {
       setMobileMenuOpen(false);
       setDropdownOpen(false);
-    }
-    if (opening) {
-      try {
-        await fetch(
-          `${import.meta.env.VITE_APP_BACKEND_URL}/notifications/mark-read`,
-          { method: "POST", credentials: "include" }
-        );
-        setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-      } catch (err) {
-        console.error("Failed to mark notifications as read", err);
-      }
+      await markAllNotificationsRead();
     }
   };
 
@@ -191,9 +144,22 @@ function NavBar() {
                 </button>
                 {notifOpen && (
                   <div className="dropdown notif-dropdown" role="menu">
-                    <div className="dropdown-header">Notifications</div>
+                    <div className="flex items-center justify-between px-4 pt-2 pb-1">
+                      <span className="text-[0.67rem] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                        Notifications
+                      </span>
+                      {notifications.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); clearAllNotifications(); }}
+                          className="text-[0.7rem] font-medium text-[var(--color-brand-primary)] hover:underline"
+                        >
+                          Clear all
+                        </button>
+                      )}
+                    </div>
                     {notifications.length === 0 ? (
-                      <div className="drop_item drop_item--empty">No new notifications</div>
+                      <div className="drop_item drop_item--empty">You're all caught up</div>
                     ) : notifications.map((n, idx) => (
                       <div key={idx} className={`drop_item${!n.read ? " drop_item--unread" : ""}`}>
                         {n.message}
@@ -286,11 +252,28 @@ function NavBar() {
               {/* Panel rendered outside nav flow via portal-like fixed positioning */}
               {notifOpen && (
                 <div className="dropdown notif-dropdown notif-dropdown--mobile" role="menu">
-                  <div className="dropdown-header">Notifications</div>
+                  <div className="flex items-center justify-between px-4 pt-3 pb-2 border-b border-[var(--surface-border)] sticky top-0 bg-[var(--surface-white)] z-10">
+                    <span className="text-sm font-bold text-[var(--text-primary)]">
+                      Notifications
+                    </span>
+                    {notifications.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); clearAllNotifications(); }}
+                        className="text-xs font-semibold text-[var(--color-brand-primary)] active:scale-95 transition px-2 py-1 rounded-md"
+                      >
+                        Clear all
+                      </button>
+                    )}
+                  </div>
                   {notifications.length === 0 ? (
-                    <div className="drop_item drop_item--empty">No new notifications</div>
+                    <div className="drop_item drop_item--empty py-8">You're all caught up</div>
                   ) : notifications.map((n, idx) => (
-                    <div key={idx} className={`drop_item${!n.read ? " drop_item--unread" : ""}`}>
+                    <div
+                      key={idx}
+                      className={`drop_item py-3${!n.read ? " drop_item--unread" : ""}`}
+                      style={{ minHeight: 48 }}
+                    >
                       {n.message}
                     </div>
                   ))}

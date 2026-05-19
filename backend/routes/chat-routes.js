@@ -5,19 +5,15 @@ const checkAuth = require("../middleware/check-auth");
 
 router.use(checkAuth);
 
-// ✅ Threads
+// Threads list
 router.get("/threads", chatController.getChatThreads);
 
-// ✅ Get chat history for a partner + task
-router.get("/:partnerId/:taskId", chatController.getChatHistory);
-
-// ✅ Send message to a partner (for specific task)
-router.post("/:partnerId/:taskId", chatController.sendMessage);
-
-// ✅ Unread count
+// Total unread count
 router.get("/count", chatController.getUnreadChats);
 
-// ✅ Mark partner chat as read
+// Per-partner endpoints
+router.get("/:partnerId", chatController.getChatHistory);
+router.post("/:partnerId", chatController.sendMessage);
 router.put("/read/:partnerId", chatController.markChatsRead);
 
 module.exports = router;

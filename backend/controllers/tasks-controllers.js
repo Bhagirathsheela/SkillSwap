@@ -8,7 +8,31 @@ const {
   createNotification,
 } = require("../controllers/notifications-controller");
 
-const ChatMessage = require("../models/chat-message"); // ⬅️ make sure you created this model
+const ChatMessage = require("../models/chat-message");
+const ChatThread = require("../models/chat-thread");
+const {
+  isUserOnline,
+  emitNewMessage,
+  emitMessageSent,
+} = require("../socket");
+
+// ─────────────────────────────────────────────────────────────
+// Lazy expiry: any "pending" connection older than 7 days is
+// considered stale and gets pulled. Runs as a single bulk update
+// at the start of list endpoints so it's idempotent and cheap.
+// ─────────────────────────────────────────────────────────────
+const PENDING_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const expireStalePendingConnections = async () => {
+  try {
+    const cutoff = new Date(Date.now() - PENDING_TTL_MS);
+    await Task.updateMany(
+      { "connections.status": "pending", "connections.createdAt": { $lt: cutoff } },
+      { $pull: { connections: { status: "pending", createdAt: { $lt: cutoff } } } }
+    );
+  } catch (err) {
+    console.warn("expireStalePendingConnections:", err.message);
+  }
+};
 
 // Helper to format task info
 const formatTask = (task) => ({
@@ -117,6 +141,7 @@ const createTask = async (req, res, next) => {
 }; */
 
 const getAllTasks = async (req, res, next) => {
+  await expireStalePendingConnections();
   const statusFilter = req.query.status; // get status from query param
   let filter = {};
 
@@ -195,7 +220,7 @@ const connectToTask = async (req, res, next) => {
     await createNotification({
       recipient: task.creator, // task owner
       sender: userId, // current logged-in user
-      message: `requested your task: ${task.title}`,
+      message: `wants to swap skills with you on "${task.title}".`,
     });
     
     res.status(200).json({
@@ -275,6 +300,17 @@ const rejectConnection = async (req, res, next) => {
     connection.status = "rejected";
     await task.save();
 
+    // Notify the requester (gently)
+    try {
+      await createNotification({
+        recipient: connection.user._id,
+        sender: userId,
+        message: `couldn't take on your request for "${task.title}" this time. Keep exploring — there are more matches out there!`,
+      });
+    } catch (e) {
+      // non-fatal
+    }
+
     res.status(200).json({
       message: `Connection request from ${connection.user.name} rejected`,
       requesterName: connection.user.name,
@@ -321,10 +357,11 @@ const acceptConnection = async (req, res, next) => {
     await createNotification({
       recipient: userId, // requester
       sender: currentUser, // task creator (acceptor)
-      message: `accepted your request for task: ${task.title}`,
+      message: `accepted your request on "${task.title}". You can now chat to plan the swap.`,
     });
 
-    // ✅ Auto create default chat message (if not already exists)
+    // ✅ Auto-create a welcome chat message + thread when accepting.
+    // Dedupe by (task, sender, receiver) so re-accepts don't double-send.
     const alreadyExists = await ChatMessage.findOne({
       task: taskId,
       sender: currentUser,
@@ -332,14 +369,44 @@ const acceptConnection = async (req, res, next) => {
     });
 
     if (!alreadyExists) {
-      const defaultMessage = new ChatMessage({
+      const delivered = isUserOnline(userId);
+      const welcomeMessage = new ChatMessage({
         sender: currentUser,
         receiver: userId,
         task: taskId,
-        message:
-          "Hey! I have accepted your task request, let's discuss more on it?",
+        message: `Hi! Thanks for reaching out — I've accepted your request on "${task.title}". What works best to kick things off?`,
+        delivered,
+        read: false,
       });
-      await defaultMessage.save();
+      await welcomeMessage.save();
+
+      // Upsert the per-pair ChatThread
+      const pairKey = ChatThread.makePairKey(currentUser, userId);
+      await ChatThread.findOneAndUpdate(
+        { pairKey },
+        {
+          $setOnInsert: { pairKey, participants: [currentUser, userId] },
+          $set: {
+            lastMessage: welcomeMessage._id,
+            lastMessageAt: welcomeMessage.createdAt || new Date(),
+          },
+        },
+        { upsert: true, new: true }
+      );
+
+      const populated = await welcomeMessage.populate([
+        { path: "sender", select: "name image" },
+        { path: "receiver", select: "name image" },
+        { path: "task", select: "title" },
+      ]);
+
+      // 🔔 Realtime push to both sides so chat badge/threads update instantly
+      try {
+        emitNewMessage(userId, populated);
+        emitMessageSent(currentUser, populated);
+      } catch (e) {
+        // socket may not be initialized; non-fatal
+      }
     }
 
     res.status(200).json({
@@ -357,6 +424,7 @@ const acceptConnection = async (req, res, next) => {
 
 
 const getInProgressTasks = async (req, res, next) => {
+  await expireStalePendingConnections();
   const { userId } = req.userData;
   let tasks;
   try {

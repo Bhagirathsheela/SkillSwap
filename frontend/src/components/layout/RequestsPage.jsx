@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuthContext } from "../../common/context/auth-context";
 import { useHttpClient } from "../../common/hooks/http-hook";
 import { useNavigate } from "react-router-dom";
+import { showError } from "../../common/toastHelper";
 
 function RequestsPage() {
   const { isLoggedIn } = useAuthContext();
@@ -29,34 +30,18 @@ function RequestsPage() {
     fetchRequests();
   }, [isLoggedIn, navigate, sendRequest]);
 
-  const handleCancel = async (taskId) => {
+  const handleAccept = async (taskId, userId) => {
     try {
       await sendRequest(
-        `${import.meta.env.VITE_APP_BACKEND_URL}/tasks/cancel/${taskId}`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/tasks/accept/${taskId}/${userId}`,
         "POST"
       );
-      setSentRequests((prev) => prev.filter((t) => t._id !== taskId));
+      setReceivedRequests((prev) => prev.filter((t) => t._id !== taskId));
     } catch (err) {
       console.error(err);
-      alert("Failed to cancel request");
+      showError("Failed to accept request");
     }
   };
-
- const handleAccept = async (taskId, userId) => {
-   try {
-     await sendRequest(
-       `${
-         import.meta.env.VITE_APP_BACKEND_URL
-       }/tasks/accept/${taskId}/${userId}`, // ✅ send requesterId in params
-       "POST"
-     );
-     setReceivedRequests((prev) => prev.filter((t) => t._id !== taskId));
-   } catch (err) {
-     console.error(err);
-     alert("Failed to accept request");
-   }
- };
-
 
   const handleReject = async (taskId) => {
     try {
@@ -67,7 +52,7 @@ function RequestsPage() {
       setReceivedRequests((prev) => prev.filter((t) => t._id !== taskId));
     } catch (err) {
       console.error(err);
-      alert("Failed to reject request");
+      showError("Failed to reject request");
     }
   };
 
@@ -77,7 +62,7 @@ function RequestsPage() {
         In Progress Requests
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-        {/* Sent Requests */}
+        {/* Sent Requests — read-only; pending requests auto-expire after 7 days */}
         <div className="bg-[var(--surface-white)] border border-[var(--surface-border)] p-4 sm:p-5 rounded-2xl shadow-[var(--card-shadow)]">
           <h3 className="text-lg sm:text-xl font-semibold mb-4 text-[var(--color-brand-primary)] flex items-center gap-2">
             <span className="inline-block w-2 h-2 rounded-full bg-[var(--color-brand-primary)]"></span>
@@ -95,14 +80,11 @@ function RequestsPage() {
               <h4 className="text-base font-semibold text-[var(--text-primary)]">
                 {task.title}
               </h4>
-              <p className="text-sm text-[var(--text-secondary)] mb-3 leading-relaxed">{task.description}</p>
-              <button
-                onClick={() => handleCancel(task._id)}
-                className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium
-                           shadow-[0_2px_6px_rgba(245,158,11,0.25)] transition"
-              >
-                Cancel
-              </button>
+              <p className="text-sm text-[var(--text-secondary)] mb-2 leading-relaxed">{task.description}</p>
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--color-brand-primary)] bg-white/70 px-2 py-1 rounded-full">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--color-brand-primary)] animate-pulse"></span>
+                Awaiting response
+              </span>
             </div>
           ))}
         </div>

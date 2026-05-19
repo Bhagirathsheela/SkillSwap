@@ -6,6 +6,7 @@ const chatMessageSchema = new mongoose.Schema(
     receiver: { type: mongoose.Types.ObjectId, ref: "User", required: true },
     task: { type: mongoose.Types.ObjectId, ref: "Task" },
     message: { type: String, required: true },
+    delivered: { type: Boolean, default: false },
     read: { type: Boolean, default: false },
   },
   { timestamps: true }

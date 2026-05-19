@@ -10,10 +10,11 @@ const userSchema = new Schema(
     city: { type: String, default: "Not set" },
     bio: { type: String, default: "No bio provided" },
     phone: { type: String, default: "" },
-    offeredTask: [{ type: String }], // array of offered task strings
+    offeredTask: [{ type: String }],
     requestedTask: [{ type: String }],
     tasks: [{ type: mongoose.Types.ObjectId, ref: "Task" }],
-    isVerified: { type: Boolean, default: false }
+    isVerified: { type: Boolean, default: false },
+    lastSeen: { type: Date, default: null }
   },
   { timestamps: true }
 );

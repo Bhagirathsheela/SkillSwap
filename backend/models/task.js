@@ -2,6 +2,18 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
+const connectionSchema = new Schema(
+  {
+    user: { type: mongoose.Types.ObjectId, ref: "User", required: true },
+    status: {
+      type: String,
+      enum: ["pending", "accepted", "rejected"],
+      default: "pending",
+    },
+  },
+  { timestamps: true } // gives each connection a createdAt + updatedAt
+);
+
 const taskSchema = new Schema(
   {
     title: { type: String, required: true },
@@ -18,17 +30,7 @@ const taskSchema = new Schema(
     },
     creator: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
 
-    // New field to store connection requests
-    connections: [
-      {
-        user: { type: mongoose.Types.ObjectId, ref: "User", required: true },
-        status: {
-          type: String,
-          enum: ["pending", "accepted", "rejected"],
-          default: "pending",
-        },
-      },
-    ],
+    connections: [connectionSchema],
   },
   { timestamps: true }
 );

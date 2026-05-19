@@ -5,6 +5,7 @@ import { FiSearch, FiX, FiMapPin, FiClock, FiUserPlus, FiUserX } from "react-ico
 import { formatUTCToLocal } from "../../common/utils.js";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../common/context/auth-context.jsx";
+import { showSuccess, showError } from "../../common/toastHelper.js";
 
 const UserCard = () => {
   const { sendRequest } = useHttpClient();
@@ -13,9 +14,8 @@ const UserCard = () => {
 
   const [tasksList, setTasksList] = React.useState([]);
   const [filteredTasks, setFilteredTasks] = React.useState([]);
-  const [searchTerm, setSearchTerm] = React.useState([]);
+  const [searchTerm, setSearchTerm] = React.useState("");
 
-  // Fetch all tasks
   React.useEffect(() => {
     const getAllTasks = async () => {
       try {
@@ -23,11 +23,9 @@ const UserCard = () => {
           `${import.meta.env.VITE_APP_BACKEND_URL}/tasks?status=open`
         );
         if (responseData?.tasks) {
-          // Filter out tasks created by the logged-in user
           const filtered = responseData.tasks.filter(
             (task) => task.creator._id !== user?.id
           );
-
           setTasksList(filtered);
           setFilteredTasks(filtered);
         }
@@ -59,7 +57,6 @@ const UserCard = () => {
         .filter(Boolean)
         .join(" ")
         .toLowerCase();
-
       return allFields.includes(value);
     });
 
@@ -88,7 +85,6 @@ const UserCard = () => {
 
   const handleConnect = async (task) => {
     if (!isLoggedIn) return navigate("/login");
-
     try {
       const res = await sendRequest(
         `${import.meta.env.VITE_APP_BACKEND_URL}/tasks/connect/${task._id}`,
@@ -98,16 +94,15 @@ const UserCard = () => {
         setTasksList((prev) => prev.filter((t) => t._id !== task._id));
         setFilteredTasks((prev) => prev.filter((t) => t._id !== task._id));
       }
-      alert(res.message);
+      if (res?.message) showSuccess(res.message);
     } catch (err) {
       console.error(err);
-      alert(err.message || "Failed to send connection request");
+      showError(err.message || "Failed to send connection request");
     }
   };
 
   const handleReject = async (task) => {
     if (!isLoggedIn) return navigate("/login");
-
     try {
       const res = await sendRequest(
         `${import.meta.env.VITE_APP_BACKEND_URL}/tasks/reject/${task._id}`,
@@ -119,14 +114,13 @@ const UserCard = () => {
       }
     } catch (err) {
       console.error(err);
-      alert(err.message || "Failed to reject connection request");
+      showError(err.message || "Failed to reject connection request");
     }
   };
 
   return (
     <>
       <section className="px-4 sm:px-8 py-10 bg-[var(--surface-bg)] min-h-screen flex flex-col items-center">
-        {/* Hero heading */}
         <div className="usercard-hero">
           <span className="usercard-hero-badge">Live swaps</span>
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-[var(--text-primary)] tracking-tight">
@@ -137,7 +131,6 @@ const UserCard = () => {
           </p>
         </div>
 
-        {/* Search bar */}
         <div className="mt-8 w-full max-w-2xl mb-10">
           <div className="usercard-search flex items-center bg-[var(--surface-white)] rounded-full overflow-hidden">
             <span className="pl-5 text-[var(--text-muted)]">
@@ -164,7 +157,6 @@ const UserCard = () => {
           </div>
         </div>
 
-        {/* Empty state */}
         {filteredTasks.length === 0 ? (
           <div className="usercard-empty flex flex-col items-center justify-center py-20">
             <div className="usercard-empty-icon">
@@ -179,7 +171,7 @@ const UserCard = () => {
           <div className="flex flex-col gap-5 sm:gap-6 max-w-[1100px] mx-auto w-full">
             {filteredTasks.map((task, index) => (
               <div key={index} className="usercard-item-wrapper">
-                {/* ── Desktop card ── */}
+                {/* Desktop card */}
                 <div
                   className="hidden sm:flex bg-[var(--surface-white)] border border-[var(--surface-border)]
                              rounded-2xl shadow-[var(--card-shadow)] hover:shadow-[var(--card-shadow-hover)]
@@ -187,7 +179,6 @@ const UserCard = () => {
                              flex-col lg:flex-row items-start lg:items-center justify-between gap-5"
                   style={{ animationDelay: `${index * 60}ms` }}
                 >
-                  {/* Profile */}
                   <div className="flex items-start gap-4 w-full lg:w-1/4">
                     <div className="usercard-avatar-wrap">
                       <img
@@ -215,7 +206,6 @@ const UserCard = () => {
                     </div>
                   </div>
 
-                  {/* Task Details */}
                   <div className="flex-1 w-full lg:w-2/4">
                     <h4 className="text-base sm:text-lg font-bold text-[var(--color-brand-primary)]">
                       {task.title}
@@ -226,9 +216,7 @@ const UserCard = () => {
                       {task.offeredTask.map((skill, i) => (
                         <span
                           key={`offered-${i}`}
-                          className={`${getRandomColor(
-                            offeredColors
-                          )} text-xs sm:text-sm px-3 py-1 rounded-full font-medium`}
+                          className={`${getRandomColor(offeredColors)} text-xs sm:text-sm px-3 py-1 rounded-full font-medium`}
                         >
                           Offered: {skill.trim()}
                         </span>
@@ -236,9 +224,7 @@ const UserCard = () => {
                       {task.requestedTask.map((skill, i) => (
                         <span
                           key={`requested-${i}`}
-                          className={`${getRandomColor(
-                            requestedColors
-                          )} text-xs sm:text-sm px-3 py-1 rounded-full font-medium`}
+                          className={`${getRandomColor(requestedColors)} text-xs sm:text-sm px-3 py-1 rounded-full font-medium`}
                         >
                           Requested: {skill.trim()}
                         </span>
@@ -254,7 +240,6 @@ const UserCard = () => {
                     )}
                   </div>
 
-                  {/* Connect / Reject */}
                   <div className="w-full lg:w-auto flex flex-col sm:flex-row lg:flex-col xl:flex-row justify-end gap-2">
                     <button
                       onClick={() => handleConnect(task)}
@@ -289,9 +274,8 @@ const UserCard = () => {
                   </div>
                 </div>
 
-                {/* ── Mobile card ── */}
+                {/* Mobile card */}
                 <div className="sm:hidden usercard-mobile bg-[var(--surface-white)] rounded-2xl p-4">
-                  {/* Mobile header */}
                   <div className="flex items-center gap-3 mb-3">
                     <img
                       src={`${import.meta.env.VITE_APP_ASSET_URL}/${
@@ -313,7 +297,6 @@ const UserCard = () => {
                     </div>
                   </div>
 
-                  {/* Mobile task info */}
                   <h4 className="text-base font-bold text-[var(--color-brand-primary)] mb-1">
                     {task.title}
                   </h4>
@@ -325,9 +308,7 @@ const UserCard = () => {
                     {task.offeredTask.map((skill, i) => (
                       <span
                         key={`m-offered-${i}`}
-                        className={`${getRandomColor(
-                          offeredColors
-                        )} text-xs px-2.5 py-1 rounded-full font-medium`}
+                        className={`${getRandomColor(offeredColors)} text-xs px-2.5 py-1 rounded-full font-medium`}
                       >
                         Offered: {skill.trim()}
                       </span>
@@ -335,9 +316,7 @@ const UserCard = () => {
                     {task.requestedTask.map((skill, i) => (
                       <span
                         key={`m-requested-${i}`}
-                        className={`${getRandomColor(
-                          requestedColors
-                        )} text-xs px-2.5 py-1 rounded-full font-medium`}
+                        className={`${getRandomColor(requestedColors)} text-xs px-2.5 py-1 rounded-full font-medium`}
                       >
                         Requested: {skill.trim()}
                       </span>
@@ -351,7 +330,6 @@ const UserCard = () => {
                     </p>
                   )}
 
-                  {/* Mobile actions */}
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleConnect(task)}
@@ -378,7 +356,7 @@ const UserCard = () => {
             ))}
           </div>
         )}
-      </section>
+            </section>
 
       <HowItWorks />
     </>

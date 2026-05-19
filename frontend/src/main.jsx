@@ -9,6 +9,7 @@ import { LoaderProvider } from "./common/context/LoaderContext.jsx";
 import { Toaster } from "react-hot-toast";
 import { PopupProvider } from "./common/context/PopupContext.jsx";
 import Popup from "./common/ui/Popup.jsx";
+import { SocketProvider } from "./common/context/SocketContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -16,10 +17,12 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <BrowserRouter>
         <PopupProvider>
           <AuthProvider>
-            <App />
-            <Toaster position="top-center" />
-            <Loader />
-            <Popup />
+            <SocketProvider>
+              <App />
+              <Toaster position="top-center" />
+              <Loader />
+              <Popup />
+            </SocketProvider>
           </AuthProvider>
         </PopupProvider>
       </BrowserRouter>
