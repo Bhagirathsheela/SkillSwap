@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {useNavigate } from "react-router-dom";
-import { useHttpClient } from "../../common/hooks/http-hook.js";
-import { showSuccess } from "../../common/toastHelper";
+import { useHttpClient } from "../hooks/http-hook.js";
+import { showSuccess } from "../lib/toastHelper";
 
 const CreateSwap = () => {
   const { sendRequest } = useHttpClient();
@@ -37,7 +37,6 @@ const CreateSwap = () => {
       newErrors.offeredTask = "Offered task is required.";
     if (!taskDetails.location.trim())
       newErrors.location = "Location is required.";
-    if (!taskDetails.deadline) newErrors.deadline = "Deadline is required.";
     // Attachments are optional, but you can add validation if needed
     return newErrors;
   };
@@ -62,7 +61,7 @@ const submitTask = async (e) => {
     formData.append("requestedTask", taskDetails.requestedTask);
     formData.append("offeredTask", taskDetails.offeredTask);
     formData.append("location", taskDetails.location);
-    formData.append("deadline", taskDetails.deadline);
+    if (taskDetails.deadline) formData.append("deadline", taskDetails.deadline);
     if (taskDetails.attachments) {
       formData.append("image", taskDetails.attachments);
     }
@@ -174,7 +173,7 @@ const submitTask = async (e) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">Deadline</label>
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">Deadline <span className="text-[var(--text-muted)] font-normal">(optional)</span></label>
             <input
               type="date"
               placeholder="Deadline"

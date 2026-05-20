@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useAuthContext } from "../../common/context/auth-context";
-import { useHttpClient } from "../../common/hooks/http-hook";
+import { useAuthContext } from "../contexts/auth-context";
+import { useHttpClient } from "../hooks/http-hook";
 import { useNavigate } from "react-router-dom";
-import { showError } from "../../common/toastHelper";
+import { showError } from "../lib/toastHelper";
+import Avatar from "../components/Avatar.jsx";
 
 function RequestsPage() {
   const { isLoggedIn } = useAuthContext();
@@ -77,6 +78,16 @@ function RequestsPage() {
               className="bg-[var(--color-brand-primary-pale)] rounded-xl p-4 mb-3 border border-[rgba(91,91,255,0.12)]
                          transition hover:border-[rgba(91,91,255,0.3)]"
             >
+              <div className="flex items-center gap-2.5 mb-2">
+                <Avatar
+                  name={task.creator?.name}
+                  imageUrl={task.creator?.image ? `${import.meta.env.VITE_APP_ASSET_URL}/${task.creator.image}` : null}
+                  size="sm"
+                />
+                <span className="text-xs text-[var(--text-secondary)]">
+                  Sent to <strong className="text-[var(--text-primary)]">{task.creator?.name || "Unknown"}</strong>
+                </span>
+              </div>
               <h4 className="text-base font-semibold text-[var(--text-primary)]">
                 {task.title}
               </h4>
@@ -104,6 +115,16 @@ function RequestsPage() {
               className="bg-emerald-50 rounded-xl p-4 mb-3 border border-emerald-100
                          transition hover:border-emerald-300"
             >
+              <div className="flex items-center gap-2.5 mb-2">
+                <Avatar
+                  name={task.requestedBy?.name}
+                  imageUrl={task.requestedBy?.image ? `${import.meta.env.VITE_APP_ASSET_URL}/${task.requestedBy.image}` : null}
+                  size="sm"
+                />
+                <span className="text-xs text-[var(--text-secondary)]">
+                  From <strong className="text-[var(--text-primary)]">{task.requestedBy?.name || "Unknown"}</strong>
+                </span>
+              </div>
               <h4 className="text-base font-semibold text-[var(--text-primary)]">
                 {task.title}
               </h4>

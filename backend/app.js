@@ -18,9 +18,17 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use("/uploads/images", express.static(path.join("uploads", "images")));
 
-// ✅ CORS
+// ✅ CORS — echo the incoming Origin back when it's allowed.
+// Allowlist comes from FRONTEND_URL (comma-separated supported) plus
+// any localhost:* origin in non-production. See utils/cors-helper.js.
+const { isAllowedOrigin } = require("./utils/cors-helper");
+
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
+  const origin = req.headers.origin;
+  if (origin && isAllowedOrigin(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+  }
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
@@ -30,6 +38,9 @@ app.use((req, res, next) => {
     "GET, POST, PATCH, PUT, DELETE"
   );
   res.setHeader("Access-Control-Allow-Credentials", "true");
+
+  // Short-circuit preflight: no need to route OPTIONS into the rest of the app.
+  if (req.method === "OPTIONS") return res.sendStatus(204);
   next();
 });
 

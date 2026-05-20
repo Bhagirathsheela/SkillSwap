@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useHttpClient } from "../../common/hooks/http-hook.js";
-import { formatUTCToLocal } from "../../common/utils.js";
-import { useAuthContext } from "../../common/context/auth-context.jsx";
+import { useHttpClient } from "../hooks/http-hook.js";
+import { formatUTCToLocal } from "../lib/utils.js";
+import { useAuthContext } from "../contexts/auth-context.jsx";
+import Avatar from "../components/Avatar.jsx";
 
 const MyTasks = () => {
   const { sendRequest } = useHttpClient();
@@ -144,13 +145,11 @@ const MyTasks = () => {
 
               {/* User Info */}
               <div className="flex items-center gap-3 sm:gap-4 pr-20">
-                <img
-                  src={`${import.meta.env.VITE_APP_ASSET_URL}/${
-                    task.creator.image || "default.png"
-                  }`}
-                  alt={task.creator.name}
-                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover"
-                  style={{ boxShadow: "0 0 0 2.5px var(--color-brand-primary)" }}
+                <Avatar
+                  name={task.creator.name}
+                  imageUrl={task.creator.image ? `${import.meta.env.VITE_APP_ASSET_URL}/${task.creator.image}` : null}
+                  size="lg"
+                  className="sm:w-14 sm:h-14"
                 />
                 <div className="min-w-0">
                   <h3 className="text-base sm:text-lg font-semibold text-[var(--text-primary)] truncate">

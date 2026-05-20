@@ -1,20 +1,20 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import NavBar from "./components/layout/NavBar";
+import NavBar from "./components/NavBar";
 // import HeroSection from "./components/HeroSection";
-import HowItWorks from "./components/layout/HowItWorks";
-import CreateSwap from "./components/layout/CreateSwap";
-import UserCard from "./components/layout/UserCard";
+import HowItWorks from "./components/HowItWorks";
+import CreateSwap from "./pages/CreateSwap";
+import UserCard from "./pages/UserCard";
 //import MyTask from "./components/user/MyTask";
-import Settings from "./components/user/Settings";
-import ProfileView from "./components/user/ProfileView";
-import SignIn from "./components/auth/SignIn";
-import PrivateRoute from "./PrivateRoute";
-import ConfirmSignupPage from "./components/auth/ConfirmSignupPage";
-import ResetPasswordPage from "./components/auth/ResetPasswordPage";
-import RequestsPage from "./components/layout/RequestsPage";
-import MyTasks from "./components/user/MyTasks";
-import ChatPage from "./components/layout/ChatPage";
-import ChangePassword from "./components/auth/ChangePassword";
+import Settings from "./pages/Settings";
+import ProfileView from "./pages/ProfileView";
+import SignIn from "./pages/SignIn";
+import PrivateRoute from "./routes/PrivateRoute";
+import ConfirmSignupPage from "./pages/ConfirmSignupPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import RequestsPage from "./pages/RequestsPage";
+import MyTasks from "./pages/MyTasks";
+import ChatPage from "./pages/ChatPage";
+import ChangePassword from "./pages/ChangePassword";
 
 function App() {
   return (

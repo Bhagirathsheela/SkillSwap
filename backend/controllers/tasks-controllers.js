@@ -218,7 +218,7 @@ const connectToTask = async (req, res, next) => {
     
     //notification
     await createNotification({
-      recipient: task.creator, // task owner
+      recipient: task.creator?._id || task.creator, // task owner — pass id, not populated doc
       sender: userId, // current logged-in user
       message: `wants to swap skills with you on "${task.title}".`,
     });

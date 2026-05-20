@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useLoader } from "../context/LoaderContext.jsx";
+import { useLoader } from "../contexts/LoaderContext.jsx";
 
 const Loader = () => {
   const { loading } = useLoader();

@@ -1,11 +1,12 @@
 import React from "react";
-import HowItWorks from "./HowItWorks.jsx";
-import { useHttpClient } from "../../common/hooks/http-hook.js";
+import HowItWorks from "../components/HowItWorks.jsx";
+import Avatar from "../components/Avatar.jsx";
+import { useHttpClient } from "../hooks/http-hook.js";
 import { FiSearch, FiX, FiMapPin, FiClock, FiUserPlus, FiUserX } from "react-icons/fi";
-import { formatUTCToLocal } from "../../common/utils.js";
+import { formatUTCToLocal } from "../lib/utils.js";
 import { useNavigate } from "react-router-dom";
-import { useAuthContext } from "../../common/context/auth-context.jsx";
-import { showSuccess, showError } from "../../common/toastHelper.js";
+import { useAuthContext } from "../contexts/auth-context.jsx";
+import { showSuccess, showError } from "../lib/toastHelper.js";
 
 const UserCard = () => {
   const { sendRequest } = useHttpClient();
@@ -181,12 +182,10 @@ const UserCard = () => {
                 >
                   <div className="flex items-start gap-4 w-full lg:w-1/4">
                     <div className="usercard-avatar-wrap">
-                      <img
-                        src={`${import.meta.env.VITE_APP_ASSET_URL}/${
-                          task.creator.image || "default.png"
-                        }`}
-                        alt={task.creator.name}
-                        className="w-16 h-16 rounded-full object-cover"
+                      <Avatar
+                        name={task.creator.name}
+                        imageUrl={task.creator.image ? `${import.meta.env.VITE_APP_ASSET_URL}/${task.creator.image}` : null}
+                        size="xl"
                       />
                     </div>
                     <div className="min-w-0">
@@ -277,12 +276,11 @@ const UserCard = () => {
                 {/* Mobile card */}
                 <div className="sm:hidden usercard-mobile bg-[var(--surface-white)] rounded-2xl p-4">
                   <div className="flex items-center gap-3 mb-3">
-                    <img
-                      src={`${import.meta.env.VITE_APP_ASSET_URL}/${
-                        task.creator.image || "default.png"
-                      }`}
-                      alt={task.creator.name}
-                      className="w-12 h-12 rounded-full object-cover flex-shrink-0 usercard-mobile-avatar"
+                    <Avatar
+                      name={task.creator.name}
+                      imageUrl={task.creator.image ? `${import.meta.env.VITE_APP_ASSET_URL}/${task.creator.image}` : null}
+                      size="lg"
+                      className="usercard-mobile-avatar"
                     />
                     <div className="min-w-0 flex-1">
                       <h3 className="font-semibold text-[var(--text-primary)] text-base truncate">

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
-import { usePopup } from "../context/PopupContext";
+import { usePopup } from "../contexts/PopupContext";
 //import { FaTimes } from "react-icons/fa";
 
 const Popup = () => {

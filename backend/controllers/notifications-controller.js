@@ -72,18 +72,38 @@ const clearAllNotifications = async (req, res, next) => {
   }
 };
 
+// Normalize anything that *might* identify a user (ObjectId, string, or
+// a populated User document) down to its string id. Without this,
+// String(populatedUserDoc) yields "[object Object]" and the socket emit
+// targets a room nobody is in — silently breaking realtime delivery.
+const toUserId = (v) => {
+  if (!v) return null;
+  if (typeof v === "string") return v;
+  if (v._id) return String(v._id);
+  return String(v);
+};
+
 // Helper: used by other controllers to create + push a notification
 const createNotification = async ({ recipient, sender, message }) => {
   try {
-    const senderUser = await User.findById(sender).select("name");
+    const recipientId = toUserId(recipient);
+    const senderId = toUserId(sender);
+    if (!recipientId) {
+      console.warn("createNotification: missing recipient");
+      return;
+    }
+
+    const senderUser = senderId
+      ? await User.findById(senderId).select("name")
+      : null;
 
     const personalizedMessage = senderUser
       ? `${senderUser.name} ${message}`
       : message;
 
     const notif = new Notification({
-      recipient,
-      sender,
+      recipient: recipientId,
+      sender: senderId,
       message: personalizedMessage,
     });
 
@@ -92,7 +112,7 @@ const createNotification = async ({ recipient, sender, message }) => {
     const populated = await notif.populate("sender", "name image");
 
     try {
-      emitNewNotification(recipient, populated);
+      emitNewNotification(recipientId, populated);
     } catch (e) {
       /* ignore */
     }

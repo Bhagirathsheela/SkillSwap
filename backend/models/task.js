@@ -22,7 +22,7 @@ const taskSchema = new Schema(
     offeredTask: { type: [{ type: String, required: true }] },
     location: { type: String, required: true },
     attachments: { type: String },
-    deadline: { type: Date, required: true },
+    deadline: { type: Date },
     status: {
       type: String,
       enum: ["open", "in-progress", "completed", "cancelled"],

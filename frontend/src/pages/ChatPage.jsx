@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import EmojiPicker from "emoji-picker-react";
-import { useAuthContext } from "../../common/context/auth-context.jsx";
-import { useSocketContext } from "../../common/context/SocketContext.jsx";
+import { useAuthContext } from "../contexts/auth-context.jsx";
+import { useSocketContext } from "../contexts/SocketContext.jsx";
+import Avatar from "../components/Avatar.jsx";
 
 // ── Ticks: 1 check = sent, 2 gray = delivered, 2 blue = read ────────────────
 const TickIcon = ({ state }) => {
@@ -458,8 +459,12 @@ function ChatPage() {
             >
               <div className="flex items-start justify-between gap-2">
                 <span className="flex items-center gap-2 min-w-0">
-                  <span className="relative inline-flex items-center justify-center w-9 h-9 rounded-full bg-[var(--color-brand-primary-pale)] text-[var(--color-brand-primary)] font-semibold text-sm flex-shrink-0">
-                    {partner.name?.[0]?.toUpperCase() || "?"}
+                  <span className="relative inline-flex flex-shrink-0">
+                    <Avatar
+                      name={partner.name}
+                      imageUrl={partner.image ? `${import.meta.env.VITE_APP_ASSET_URL}/${partner.image}` : null}
+                      size="sm"
+                    />
                     {presence?.online && (
                       <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white"></span>
                     )}
@@ -505,9 +510,11 @@ function ChatPage() {
                 </svg>
               </button>
               <div className="relative">
-                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[var(--color-brand-primary-pale)] text-[var(--color-brand-primary)] font-semibold text-base">
-                  {activePartner?.name?.[0]?.toUpperCase() || "?"}
-                </div>
+                <Avatar
+                  name={activePartner?.name}
+                  imageUrl={activePartner?.image ? `${import.meta.env.VITE_APP_ASSET_URL}/${activePartner.image}` : null}
+                  size="md"
+                />
                 {partnerPresence?.online && (
                   <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white"></span>
                 )}

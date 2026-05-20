@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useHttpClient } from "../../common/hooks/http-hook.js";
-import { showSuccess } from "../../common/toastHelper";
+import { useHttpClient } from "../hooks/http-hook.js";
+import { showSuccess } from "../lib/toastHelper";
 
 const Signup = ({ setShowLogin }) => {
   const [name, setName] = useState("");

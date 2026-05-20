@@ -1,6 +1,6 @@
 import { useCallback } from "react";
-import { useLoader } from "../context/LoaderContext.jsx";
-import { showError } from "../toastHelper.js";
+import { useLoader } from "../contexts/LoaderContext.jsx";
+import { showError } from "../lib/toastHelper.js";
 
 // URLs whose failures should NOT surface an error toast to the user.
 // These are passive reads where a failure is expected (e.g. no active

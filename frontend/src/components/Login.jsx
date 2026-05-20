@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useHttpClient } from "../../common/hooks/http-hook.js";
-import { usePopup } from "../../common/context/PopupContext.jsx";
+import { useHttpClient } from "../hooks/http-hook.js";
+import { usePopup } from "../contexts/PopupContext.jsx";
 import ResetPwdPopupForm from "./ResetPwdPopupForm";
-import { useAuthContext } from "../../common/context/auth-context.jsx";
+import { useAuthContext } from "../contexts/auth-context.jsx";
 
 const Login = ({ setShowLogin }) => {
   const { login } = useAuthContext();

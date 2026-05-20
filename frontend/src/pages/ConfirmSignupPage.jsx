@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useHttpClient } from "../../common/hooks/http-hook.js";
-import { showSuccess, showError } from "../../common/toastHelper";
+import { useHttpClient } from "../hooks/http-hook.js";
+import { showSuccess, showError } from "../lib/toastHelper";
 
 const ConfirmSignupPage = () => {
   const location = useLocation();

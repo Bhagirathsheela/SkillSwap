@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useHttpClient } from "../../common/hooks/http-hook";
-import { showSuccess, showError } from "../../common/toastHelper";
+import { useHttpClient } from "../hooks/http-hook";
+import { showSuccess, showError } from "../lib/toastHelper";
 
 const EyeIcon = ({ open }) => (
   open ? (

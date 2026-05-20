@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { usePopup } from "../../common/context/PopupContext.jsx";
-import DeleteAccountPopupForm from "../auth/DeleteAccountPopupForm";
+import { usePopup } from "../contexts/PopupContext.jsx";
+import DeleteAccountPopupForm from "../components/DeleteAccountPopupForm";
 
 const darkStyleId = "darkify-style";
 

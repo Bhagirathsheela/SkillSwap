@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useHttpClient } from "../../common/hooks/http-hook.js";
-import { showSuccess, showError } from "../../common/toastHelper";
+import { useHttpClient } from "../hooks/http-hook.js";
+import { showSuccess, showError } from "../lib/toastHelper";
 
 const ProfileView = () => {
   const { sendRequest } = useHttpClient();

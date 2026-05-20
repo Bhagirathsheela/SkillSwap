@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { useAuthContext } from "./common/context/auth-context";
-import { useLoader } from "./common/context/LoaderContext.jsx";
+import { useAuthContext } from "../contexts/auth-context";
+import { useLoader } from "../contexts/LoaderContext.jsx";
 
 const PrivateRoute = ({ children }) => {
   const { isLoggedIn, isAuthReady } = useAuthContext();

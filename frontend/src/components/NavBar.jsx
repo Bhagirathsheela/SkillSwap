@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuthContext } from "../../common/context/auth-context.jsx";
-import { useSocketContext } from "../../common/context/SocketContext.jsx";
-import { FaUser, FaBell, FaComments } from "react-icons/fa";
+import { useAuthContext } from "../contexts/auth-context.jsx";
+import { useSocketContext } from "../contexts/SocketContext.jsx";
+import { FaBell, FaComments } from "react-icons/fa";
+import Avatar from "./Avatar";
 
 function NavBar() {
   const [dropdownOpen, setDropdownOpen]     = useState(false);
@@ -16,7 +17,7 @@ function NavBar() {
 
   const location = useLocation();
   const navigate = useNavigate();
-  const { isLoggedIn, logout } = useAuthContext();
+  const { isLoggedIn, logout, user } = useAuthContext();
 
   // 🚀 Realtime values from SocketContext — no more polling
   const {
@@ -194,7 +195,7 @@ function NavBar() {
                   aria-haspopup="true"
                   aria-label="Account menu"
                 >
-                  <span className="profile_icon" aria-hidden="true"><FaUser /></span>
+                  <Avatar name={user?.name} email={user?.email} imageUrl={user?.image ? `${import.meta.env.VITE_APP_ASSET_URL}/${user.image}` : null} size="sm" />
                 </button>
                 {dropdownOpen && (
                   <div className="dropdown" role="menu">

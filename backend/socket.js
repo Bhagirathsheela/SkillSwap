@@ -2,6 +2,7 @@ const { Server } = require("socket.io");
 const jwt = require("jsonwebtoken");
 const ChatMessage = require("./models/chat-message");
 const User = require("./models/user");
+const { isAllowedOrigin } = require("./utils/cors-helper");
 
 // Minimal cookie parser (no extra dependency)
 const parseCookies = (raw) => {
@@ -45,7 +46,11 @@ const isUserOnline = (userId) => onlineUsers.has(String(userId));
 const initSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: process.env.FRONTEND_URL,
+      // Function form: echo origin back when allowed (dev: any localhost port).
+      origin: (origin, callback) => {
+        if (isAllowedOrigin(origin)) return callback(null, true);
+        return callback(new Error(`Socket CORS: origin ${origin} not allowed`));
+      },
       methods: ["GET", "POST"],
       credentials: true,
     },
